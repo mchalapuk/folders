@@ -32,7 +32,7 @@ Usage: folder <command> [arguments...]
 In order to create a group, just link the script into another file.
 
 ```sh
-ln -s ~/bin/program ~/bin/all-repos
+ln -s ~/bin/folders ~/bin/all-repos
 all-repos add ~/code/*
 all-repos run git checkout master
 all-repos run git pull
