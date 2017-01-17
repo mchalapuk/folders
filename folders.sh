@@ -30,17 +30,53 @@ do
   fi
 done
 
-# Folders database file is derived from program name
-# (symlinking the script creates another folder group)
-FOLDERS_DB=~/.${PRG##*/}
-test -f $FOLDERS_DB || touch $FOLDERS_DB
+# When running in terminal we should like to have colored messages.
+if tty -s
+then
+  cyan() {
+    echo -e "\e[36m$@\e[0m"
+  }
+  green() {
+    echo -e "\e[32m$@\e[0m"
+  }
+  red() {
+    echo -e "\e[31m$@\e[0m"
+  }
+  yellow() {
+    echo -e "\e[33m$@\e[0m"
+  }
+  bold() {
+    echo -e "\e[1m$@\e[0m"
+  }
+else
+  cyan() {
+    echo $@
+  }
+  green() {
+    echo $@
+  }
+  red() {
+    echo $@
+  }
+  yellow() {
+    echo $@
+  }
+  bold() {
+    echo $@
+  }
+fi
 
-TTY=`tty`
+# Group name is derived from program name
+# (symlinking the script creates another folder group)
+GROUP_NAME=${PRG##*/}
+
+FOLDERS_DB=~/.$GROUP_NAME
+test -f $FOLDERS_DB || touch $FOLDERS_DB
 
 # <COMMANDS>
 
 list() {
-  cat $FOLDERS_DB
+  cat $FOLDERS_DB | while read LINE; do cyan $LINE; done
 }
 
 add() {
@@ -50,11 +86,11 @@ add() {
 
     if egrep -q "^$ADDED$" $FOLDERS_DB
     then
-      echo "already added: $ADDED" >&2
+      red "already added: $ADDED" >&2
       continue
     fi
 
-    echo "+$ADDED"
+    echo `yellow "$GROUP_NAME"`: `green "+"``cyan "$ADDED"`
     echo "$ADDED" >> $FOLDERS_DB
   done
 }
@@ -66,7 +102,7 @@ del() {
 
     if ! egrep -q "^$DELETED$" $FOLDERS_DB
     then
-      echo "not found: $DELETED" >&2
+      red "not found: $DELETED" >&2
       continue
     fi
 
@@ -77,7 +113,7 @@ del() {
       ABSOLUTE_PATH=`readlink -f "$FOLDER"`
       if [[ "$ABSOLUTE_PATH" == "$DELETED" ]]
       then
-        echo "-$DELETED"
+        echo `yellow "$GROUP_NAME"`: `red "-"``cyan "$DELETED"`
       else
         echo "$ABSOLUTE_PATH" >> $FOLDERS_DB
       fi
@@ -85,10 +121,12 @@ del() {
   done
 }
 
+TTY=`tty`
+
 run() {
   cat $FOLDERS_DB | while read FOLDER
   do
-    echo $USER@`cat /etc/hostname`:`pwd`$ $*
+    echo `yellow $USER@$(cat /etc/hostname)`:`cyan $(pwd)`$ $*
 
     bash -c "cd $FOLDER; $*" 0<$TTY || true
 
