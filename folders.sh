@@ -30,7 +30,7 @@ do
   fi
 done
 
-# When running in terminal we should like to have colored messages.
+# When running in terminal we would like to have colored messages.
 if tty -s
 then
   cyan() {
@@ -45,9 +45,6 @@ then
   yellow() {
     echo -e "\e[33m$@\e[0m"
   }
-  bold() {
-    echo -e "\e[1m$@\e[0m"
-  }
 else
   cyan() {
     echo $@
@@ -59,9 +56,6 @@ else
     echo $@
   }
   yellow() {
-    echo $@
-  }
-  bold() {
     echo $@
   }
 fi
@@ -126,7 +120,7 @@ TTY=`tty`
 run() {
   cat $FOLDERS_DB | while read FOLDER
   do
-    echo `yellow $USER@$(cat /etc/hostname)`:`cyan $(pwd)`$ $*
+    echo `yellow $USER@$(cat /etc/hostname)`:`cyan $FOLDER`$ $*
 
     bash -c "cd $FOLDER; $*" 0<$TTY || true
 
