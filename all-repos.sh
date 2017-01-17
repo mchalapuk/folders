@@ -14,33 +14,55 @@ list() {
 add() {
   ls -1d $@ | while read REPO
   do
-    if [ `egrep "^$REPO$" $REPOS_DB` ]
+    ADDED=`readlink -f $REPO`
+
+    if [ `egrep "^$ADDED$" $REPOS_DB` ]
     then
-      echo "already added: $REPO" >&2
-    else
-      echo $REPO
-      echo $REPO >> $REPOS_DB
+      echo "already added: $ADDED" >&2
+      continue
     fi
+
+    echo +$ADDED
+    echo $ADDED >> $REPOS_DB
   done
 }
 del() {
-  ls -1d $@ | while read DELETED
+  ls -1d $@ | while read R
   do
+    DELETED=`readlink -f $R`
+
+    if [ -z `egrep "^$DELETED$" $REPOS_DB` ]
+    then
+      echo "repo not found: $DELETED" >&2
+      continue
+    fi
+
     mv $REPOS_DB $REPOS_DB.old
+
     cat $REPOS_DB.old | while read REPO
     do 
-      if [ $REPO == $DELETED ]
+      PATH=`readlink -f $REPO`
+      if [ $PATH == $DELETED ]
       then
-        echo -$REPO
+        echo -$DELETED
       else
-        echo $REPO >> $REPOS_DB
+        echo $DELETED >> $REPOS_DB
       fi
     done
   done
 }
 
 run() {
-  echo -n ""
+  cat $REPOS_DB | while read REPO
+  do
+    cd $REPO
+    echo "$USER@`cat /etc/hostname`:`pwd`$ $@"
+
+    $@ || true
+
+    cd - >/dev/null
+    echo ""
+  done
 }
 
 usage() {
