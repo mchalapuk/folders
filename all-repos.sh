@@ -69,15 +69,20 @@ usage() {
   echo "Usage: $PRG <command> [arguments...]" >&2
   echo "">&2
   echo "  Commands:" >&2
-  echo "    run <command-line> - runs specified command on all repositories" >&2
+  echo "    list - lists added repositories" >&2
+  echo "    add [folders...] - adds specified folders to repository list" >&2
+  echo "    del [folders...] - deletes specified folders from repository list" >&2
+  echo "    run <command-line> - runs specified command on all added repositories" >&2
+  echo "    usage - shows this message" >&2
   echo "" >&2
 }
 
 case "$CMD" in
-  "list") list;;
+  "list") ;& "all") list;;
   "add") add $@;;
-  "del") del $@;;
+  "del") ;& "delete") ;& "remove") ;& "rm") del $@;;
   "run") run $@;;
+  "help") ;&  "?") ;& "usage") usage;;
   "")
     echo "command is required" >&2
     echo "" >&2
