@@ -30,6 +30,13 @@ do
   fi
 done
 
+# Group name is derived from program name
+# (symlinking the script creates another folder group)
+GROUP_NAME=${PRG##*/}
+
+FOLDERS_DB=~/.$GROUP_NAME
+test -f $FOLDERS_DB || touch $FOLDERS_DB
+
 # When running in terminal we would like to have colored messages.
 if tty -s
 then
@@ -65,13 +72,6 @@ else
     echo $@
   }
 fi
-
-# Group name is derived from program name
-# (symlinking the script creates another folder group)
-GROUP_NAME=${PRG##*/}
-
-FOLDERS_DB=~/.$GROUP_NAME
-test -f $FOLDERS_DB || touch $FOLDERS_DB
 
 # <COMMANDS>
 
@@ -121,6 +121,8 @@ del() {
   done
 }
 
+# tty must not be run inside a function
+# (functions have their own input and output descriptors).
 TTY=`tty`
 
 run() {
@@ -143,12 +145,12 @@ case "$CMD" in
   "run") run $ARGS;;
   "help") ;&  "?") ;& "usage") usage;;
   "")
-    echo "command is required" >&2
+    echo `red "command is required"` >&2
     echo "" >&2
     usage
     ;;
   *)
-    echo "unknown command: $CMD" >&2
+    echo `red "unknown command: $CMD"` >&2
     echo "" >&2
     usage
     ;;
