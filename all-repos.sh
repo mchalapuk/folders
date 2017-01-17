@@ -5,7 +5,17 @@ test -f $REPOS_DB || touch $REPOS_DB
 
 PRG=$0
 CMD=$1
-shift
+ARGS=""
+for ARG in "${@:2}"
+do
+  ARG="${ARG//\\/\\\\}"
+  if grep -q ' ' <<< "$ARG"
+  then
+    ARGS="$ARGS \"${ARG//\"/\\\"}\""
+  else
+    ARGS="$ARGS $ARG"
+  fi
+done
 
 list() {
   cat $REPOS_DB
@@ -40,7 +50,7 @@ del() {
     mv $REPOS_DB $REPOS_DB.old
 
     cat $REPOS_DB.old | while read REPO
-    do 
+    do
       PATH=`readlink -f $REPO`
       if [ $PATH == $DELETED ]
       then
@@ -55,12 +65,14 @@ del() {
 run() {
   cat $REPOS_DB | while read REPO
   do
+    DIR=`pwd`
     cd $REPO
-    echo "$USER@`cat /etc/hostname`:`pwd`$ $@"
 
-    $@ || true
+    echo $USER@`cat /etc/hostname`:`pwd`$ $ARGS
 
-    cd - >/dev/null
+    bash -c "$ARGS" || true
+
+    cd $DIR
     echo ""
   done
 }
