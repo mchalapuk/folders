@@ -7,6 +7,10 @@ PRG=$0
 CMD=$1
 shift
 
+list() {
+  cat $REPOS_DB
+}
+
 run() {
   echo -n ""
 }
@@ -20,9 +24,8 @@ usage() {
 }
 
 case "$CMD" in
-  "run")
-    run $@
-    ;;
+  "list") list;;
+  "run") run $@;;
   "")
     echo "command is required" >&2
     echo "" >&2
