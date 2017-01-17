@@ -35,6 +35,10 @@ done
 FOLDERS_DB=~/.${PRG##*/}
 test -f $FOLDERS_DB || touch $FOLDERS_DB
 
+TTY=`tty`
+
+# <COMMANDS>
+
 list() {
   cat $FOLDERS_DB
 }
@@ -89,12 +93,14 @@ run() {
 
     echo $USER@`cat /etc/hostname`:`pwd`$ $*
 
-    bash -c "$*" || true
+    bash -c "$*" 0<$TTY || true
 
     cd $DIR
     echo ""
   done
 }
+
+# </COMMANDS>
 
 case "$CMD" in
   "list") ;& "all") list;;
