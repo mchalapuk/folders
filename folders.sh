@@ -88,14 +88,10 @@ del() {
 run() {
   cat $FOLDERS_DB | while read FOLDER
   do
-    DIR=`pwd`
-    cd $FOLDER
-
     echo $USER@`cat /etc/hostname`:`pwd`$ $*
 
-    bash -c "$*" 0<$TTY || true
+    bash -c "cd $FOLDER; $*" 0<$TTY || true
 
-    cd $DIR
     echo ""
   done
 }
