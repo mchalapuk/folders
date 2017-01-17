@@ -32,7 +32,13 @@ Usage: folder <command> [arguments...]
 In order to create a group, just link the script into another file.
 
 ```sh
-ln -s ~/bin/folders ~/bin/all-repos
+cd ~/bin
+ln -s folders all-repos
+```
+
+New group is be used when running the script via `all-repos` symlink.
+
+```
 all-repos add ~/code/*
 all-repos run git checkout master
 all-repos run git pull
@@ -40,10 +46,9 @@ all-repos run git pull
 
 Above code:
 
- 1. Creates a group named `all-repos`,
- 2. Adds all folders from `~/code/` directory to the group,
- 3. Runs `git checkout master` command on all folders,
- 4. Runs `git pull` command on all folders.
+ 1. Adds all folders from `~/code/` directory to the group,
+ 2. Runs `git checkout master` command on all folders,
+ 3. Runs `git pull` command on all folders.
 
 ## License
 
