@@ -15,7 +15,22 @@ add() {
   ls -1d $@ | while read REPO
   do
     echo $REPO
-    echo "$REPO" >> $REPOS_DB
+    echo $REPO >> $REPOS_DB
+  done
+}
+del() {
+  ls -1d $@ | while read DELETED
+  do
+    mv $REPOS_DB $REPOS_DB.old
+    cat $REPOS_DB.old | while read REPO
+    do 
+      if [ $REPO == $DELETED ]
+      then
+        echo -$REPO
+      else
+        echo $REPO >> $REPOS_DB
+      fi
+    done
   done
 }
 
@@ -33,8 +48,9 @@ usage() {
 
 case "$CMD" in
   "list") list;;
-  "run") run $@;;
   "add") add $@;;
+  "del") del $@;;
+  "run") run $@;;
   "")
     echo "command is required" >&2
     echo "" >&2
