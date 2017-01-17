@@ -36,7 +36,7 @@ cd ~/bin
 ln -s folders all-repos
 ```
 
-New group is be used when running the script via `all-repos` symlink.
+New group is used when running the script via `all-repos` symlink.
 
 ```
 all-repos add ~/code/*
