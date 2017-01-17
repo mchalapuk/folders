@@ -1,7 +1,23 @@
 #!/bin/bash
 
 PRG=$0
+
+usage() {
+  echo "Usage: $PRG <command> [arguments...]" >&2
+  echo "">&2
+  echo "  Commands:" >&2
+  echo "    list - lists added folders" >&2
+  echo "    add [folders...] - adds specified folders to the list" >&2
+  echo "    del [folders...] - deletes specified folders from the list" >&2
+  echo "    run <command-line> - runs specified command on all added folders" >&2
+  echo "    usage - shows this message" >&2
+  echo "" >&2
+}
+
 CMD=$1
+
+# Arguments need to be properly escaped and quoted
+# as they will be passed into another shell.
 ARGS=""
 for ARG in "${@:2}"
 do
@@ -14,6 +30,8 @@ do
   fi
 done
 
+# Folders database file is derived from program name
+# (symlinking the script creates another folder group)
 FOLDERS_DB=~/.${PRG##*/}
 test -f $FOLDERS_DB || touch $FOLDERS_DB
 
@@ -76,18 +94,6 @@ run() {
     cd $DIR
     echo ""
   done
-}
-
-usage() {
-  echo "Usage: $PRG <command> [arguments...]" >&2
-  echo "">&2
-  echo "  Commands:" >&2
-  echo "    list - lists added folders" >&2
-  echo "    add [folders...] - adds specified folders to the list" >&2
-  echo "    del [folders...] - deletes specified folders from the list" >&2
-  echo "    run <command-line> - runs specified command on all added folders" >&2
-  echo "    usage - shows this message" >&2
-  echo "" >&2
 }
 
 case "$CMD" in
