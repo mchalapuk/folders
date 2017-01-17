@@ -45,6 +45,9 @@ then
   yellow() {
     echo -e "\e[33m$@\e[0m"
   }
+  magenta() {
+    echo -e "\e[35m$@\e[0m"
+  }
 else
   cyan() {
     echo $@
@@ -56,6 +59,9 @@ else
     echo $@
   }
   yellow() {
+    echo $@
+  }
+  magenta() {
     echo $@
   }
 fi
@@ -124,7 +130,7 @@ run() {
 
     bash -c "cd $FOLDER; $*" 0<$TTY || true
 
-    echo ""
+    echo `magenta EOF`
   done
 }
 
