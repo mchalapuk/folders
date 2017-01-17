@@ -26,24 +26,25 @@ add() {
   do
     ADDED=`readlink -f $FOLDER`
 
-    if [ `egrep "^$ADDED$" $FOLDERS_DB` ]
+    if egrep -q "^$ADDED$" $FOLDERS_DB
     then
       echo "already added: $ADDED" >&2
       continue
     fi
 
-    echo +$ADDED
-    echo $ADDED >> $FOLDERS_DB
+    echo "+$ADDED"
+    echo "$ADDED" >> $FOLDERS_DB
   done
 }
-del() {
-  ls -1d $@ | while read R
-  do
-    DELETED=`readlink -f $R`
 
-    if [ -z `egrep "^$DELETED$" $FOLDERS_DB` ]
+del() {
+  ls -1d $@ | while read ENTRY
+  do
+    DELETED=`readlink -f "$ENTRY"`
+
+    if ! egrep -q "^$DELETED$" $FOLDERS_DB
     then
-      echo "repo not found: $DELETED" >&2
+      echo "not found: $DELETED" >&2
       continue
     fi
 
@@ -51,12 +52,12 @@ del() {
 
     cat $FOLDERS_DB.old | while read FOLDER
     do
-      PATH=`readlink -f $FOLDER`
-      if [ $PATH == $DELETED ]
+      ABSOLUTE_PATH=`readlink -f "$FOLDER"`
+      if [[ "$ABSOLUTE_PATH" == "$DELETED" ]]
       then
-        echo -$DELETED
+        echo "-$DELETED"
       else
-        echo $DELETED >> $FOLDERS_DB
+        echo "$ABSOLUTE_PATH" >> $FOLDERS_DB
       fi
     done
   done
@@ -68,9 +69,9 @@ run() {
     DIR=`pwd`
     cd $FOLDER
 
-    echo $USER@`cat /etc/hostname`:`pwd`$ $ARGS
+    echo $USER@`cat /etc/hostname`:`pwd`$ $*
 
-    bash -c "$ARGS" || true
+    bash -c "$*" || true
 
     cd $DIR
     echo ""
@@ -91,9 +92,9 @@ usage() {
 
 case "$CMD" in
   "list") ;& "all") list;;
-  "add") add $@;;
-  "del") ;& "delete") ;& "remove") ;& "rm") del $@;;
-  "run") run $@;;
+  "add") add $ARGS;;
+  "del") ;& "delete") ;& "remove") ;& "rm") del $ARGS;;
+  "run") run $ARGS;;
   "help") ;&  "?") ;& "usage") usage;;
   "")
     echo "command is required" >&2
