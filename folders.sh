@@ -1,8 +1,5 @@
 #!/bin/bash
 
-REPOS_DB=~/.all-repos
-test -f $REPOS_DB || touch $REPOS_DB
-
 PRG=$0
 CMD=$1
 ARGS=""
@@ -17,23 +14,26 @@ do
   fi
 done
 
+FOLDERS_DB=~/.${PRG##*/}
+test -f $FOLDERS_DB || touch $FOLDERS_DB
+
 list() {
-  cat $REPOS_DB
+  cat $FOLDERS_DB
 }
 
 add() {
-  ls -1d $@ | while read REPO
+  ls -1d $@ | while read FOLDER
   do
-    ADDED=`readlink -f $REPO`
+    ADDED=`readlink -f $FOLDER`
 
-    if [ `egrep "^$ADDED$" $REPOS_DB` ]
+    if [ `egrep "^$ADDED$" $FOLDERS_DB` ]
     then
       echo "already added: $ADDED" >&2
       continue
     fi
 
     echo +$ADDED
-    echo $ADDED >> $REPOS_DB
+    echo $ADDED >> $FOLDERS_DB
   done
 }
 del() {
@@ -41,32 +41,32 @@ del() {
   do
     DELETED=`readlink -f $R`
 
-    if [ -z `egrep "^$DELETED$" $REPOS_DB` ]
+    if [ -z `egrep "^$DELETED$" $FOLDERS_DB` ]
     then
       echo "repo not found: $DELETED" >&2
       continue
     fi
 
-    mv $REPOS_DB $REPOS_DB.old
+    mv $FOLDERS_DB $FOLDERS_DB.old
 
-    cat $REPOS_DB.old | while read REPO
+    cat $FOLDERS_DB.old | while read FOLDER
     do
-      PATH=`readlink -f $REPO`
+      PATH=`readlink -f $FOLDER`
       if [ $PATH == $DELETED ]
       then
         echo -$DELETED
       else
-        echo $DELETED >> $REPOS_DB
+        echo $DELETED >> $FOLDERS_DB
       fi
     done
   done
 }
 
 run() {
-  cat $REPOS_DB | while read REPO
+  cat $FOLDERS_DB | while read FOLDER
   do
     DIR=`pwd`
-    cd $REPO
+    cd $FOLDER
 
     echo $USER@`cat /etc/hostname`:`pwd`$ $ARGS
 
@@ -81,10 +81,10 @@ usage() {
   echo "Usage: $PRG <command> [arguments...]" >&2
   echo "">&2
   echo "  Commands:" >&2
-  echo "    list - lists added repositories" >&2
-  echo "    add [folders...] - adds specified folders to repository list" >&2
-  echo "    del [folders...] - deletes specified folders from repository list" >&2
-  echo "    run <command-line> - runs specified command on all added repositories" >&2
+  echo "    list - lists added folders" >&2
+  echo "    add [folders...] - adds specified folders to the list" >&2
+  echo "    del [folders...] - deletes specified folders from the list" >&2
+  echo "    run <command-line> - runs specified command on all added folders" >&2
   echo "    usage - shows this message" >&2
   echo "" >&2
 }
