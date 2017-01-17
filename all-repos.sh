@@ -11,6 +11,14 @@ list() {
   cat $REPOS_DB
 }
 
+add() {
+  ls -1d $@ | while read REPO
+  do
+    echo $REPO
+    echo "$REPO" >> $REPOS_DB
+  done
+}
+
 run() {
   echo -n ""
 }
@@ -26,6 +34,7 @@ usage() {
 case "$CMD" in
   "list") list;;
   "run") run $@;;
+  "add") add $@;;
   "")
     echo "command is required" >&2
     echo "" >&2
