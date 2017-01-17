@@ -14,8 +14,13 @@ list() {
 add() {
   ls -1d $@ | while read REPO
   do
-    echo $REPO
-    echo $REPO >> $REPOS_DB
+    if [ `egrep "^$REPO$" $REPOS_DB` ]
+    then
+      echo "already added: $REPO" >&2
+    else
+      echo $REPO
+      echo $REPO >> $REPOS_DB
+    fi
   done
 }
 del() {
