@@ -11,10 +11,10 @@
 # the rights to use, copy, modify, merge, publish, distribute, sublicense,
 # and/or sell copies of the Software, and to permit persons to whom the Software
 # is furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 # OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
@@ -27,7 +27,7 @@
 PRG=$0
 
 usage() {
-  echo "Usage: $PRG <command> [arguments...]" >&2
+  echo "Usage: $PRG [options...] <command> [arguments...]" >&2
   echo "">&2
   echo "  Commands:" >&2
   echo "    list - lists added folders" >&2
@@ -36,14 +36,46 @@ usage() {
   echo "    run <command-line> - runs specified command on all added folders" >&2
   echo "    usage - shows this message" >&2
   echo "" >&2
+  echo "  Options:" >&2
+  echo "    --clean (-c) - displays only stdout and stderr from child processes">&2
+  echo "" >&2
 }
 
-CMD=$1
+CURSOR=1
+
+declare -A OPTS
+OPTS=(
+  [-c]="CLEAN_OUTPUT"
+  [--clean]="CLEAN_OUTPUT"
+)
+
+CLEAN_OUTPUT=false
+for OPT in "${@:$CURSOR}"
+do
+  if ! grep -q '^-.*$' <<< "$OPT"
+  then
+    break
+  fi
+  VAR=${OPTS[$OPT]}
+  if [ -z "$VAR" ]
+  then
+    echo "`red "unrecognized option: $OPT"`" >&2
+    usage
+    exit 1
+  fi
+
+  eval $VAR=true
+
+  CURSOR=$[$CURSOR + 1]
+done
+
+eval CMD=\$$CURSOR
+CURSOR=$[$CURSOR + 1]
 
 # Arguments need to be properly escaped and quoted
 # as they will be passed into another shell.
 ARGS=""
-for ARG in "${@:2}"
+for ARG in "${@:$CURSOR}"
 do
   ARG="${ARG//\\/\\\\}"
   if grep -q ' ' <<< "$ARG"
@@ -114,7 +146,7 @@ add() {
       continue
     fi
 
-    echo `yellow "$GROUP_NAME"`: `green "+"``cyan "$ADDED"`
+    $CLEAN_OUTPUT || echo `yellow "$GROUP_NAME"`: `green "+"``cyan "$ADDED"`
     echo "$ADDED" >> $FOLDERS_DB
   done
 }
@@ -137,7 +169,7 @@ del() {
       ABSOLUTE_PATH=`readlink -f "$FOLDER"`
       if [[ "$ABSOLUTE_PATH" == "$DELETED" ]]
       then
-        echo `yellow "$GROUP_NAME"`: `red "-"``cyan "$DELETED"`
+        $CLEAN_OUTPUT || echo `yellow "$GROUP_NAME"`: `red "-"``cyan "$DELETED"`
       else
         echo "$ABSOLUTE_PATH" >> $FOLDERS_DB
       fi
@@ -152,11 +184,11 @@ TTY=`tty`
 run() {
   cat $FOLDERS_DB | while read FOLDER
   do
-    echo `yellow $USER@$(cat /etc/hostname)`:`cyan $FOLDER`$ $*
+    $CLEAN_OUTPUT || echo `yellow $USER@$(cat /etc/hostname)`:`cyan $FOLDER`$ $*
 
     bash -c "cd $FOLDER; $*" 0<$TTY || true
 
-    echo `magenta EOF`
+    $CLEAN_OUTPUT || echo `magenta EOF`
   done
 }
 
