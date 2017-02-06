@@ -8,10 +8,8 @@ Below instuction assumes that you have `~/bin` directory which is added to your
 `PATH` environment variable.
 
 ```sh
-cd ~
-git clone https://github.com/muroc/folders
-cd ~/bin
-ln -s ../folders/folders.sh ./folders
+wget https://raw.githubusercontent.com/muroc/folders/master/folders.sh -O ~/bin/folders
+chmod +x ~/bin/folders
 ```
 
 ## Usage
