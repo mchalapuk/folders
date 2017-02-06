@@ -15,7 +15,7 @@ chmod +x ~/bin/folders
 ## Usage
 
 ```
-Usage: folder <command> [arguments...]
+Usage: folders <command> [arguments...]
 
   Commands:
     list - lists folders added to the group
@@ -23,6 +23,9 @@ Usage: folder <command> [arguments...]
     del [folders...] - deletes specified folders from the group
     run <command-line> - runs specified command on all added folders
     usage - shows this message
+    
+  Options:
+    --clean (-c) - displays only stdout and stderr from child processes
 ```
 
 ### Creating Groups
