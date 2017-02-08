@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# This script contains all commands typed when recording a demo with ttyrec.
+# This script contains all commands typed when recording a demo with ttystudio.
 #
 # Copyright (c) Maciej Chałapuk
 # Released under MIT License
