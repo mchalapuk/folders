@@ -1,10 +1,10 @@
-![Folders Demo][demo]
-
-[demo]: https://muroc.github.io/folders/tty.gif
-
 # folders
 
 Group directories and sequentially run shell operation on all group members.
+
+![Folders Demo][demo]
+
+[demo]: https://muroc.github.io/folders/tty.gif
 
 ## Installation
 
