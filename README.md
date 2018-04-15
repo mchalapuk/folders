@@ -4,7 +4,7 @@ Group directories and sequentially run shell operation on all group members.
 
 ![Folders Demo][demo]
 
-[demo]: https://muroc.github.io/folders/tty.gif
+[demo]: https://mchalapuk.github.io/folders/tty.gif
 
 ## Installation
 
@@ -12,7 +12,7 @@ Below instuction assumes that you have `~/bin` directory which is added to your
 `PATH` environment variable.
 
 ```sh
-wget https://raw.githubusercontent.com/muroc/folders/master/folders.sh -O ~/bin/folders
+wget https://raw.githubusercontent.com/mchalapuk/folders/master/folders.sh -O ~/bin/folders
 chmod +x ~/bin/folders
 ```
 

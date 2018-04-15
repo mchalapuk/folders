@@ -7,7 +7,7 @@
 
 cd ~/bin
 ls
-wget https://raw.githubusercontent.com/muroc/folders/master/folders.s://raw.githubusercontent.com/muroc/folders/master/folders.sh -O folders
+wget https://raw.githubusercontent.com/mchalapuk/folders/master/folders.s://raw.githubusercontent.com/mchalapuk/folders/master/folders.sh -O folders
 chmod +x folders
 folders ?
 
